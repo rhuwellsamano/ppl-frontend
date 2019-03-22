@@ -18,9 +18,9 @@ class Container extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="container">
         <h2>Project Management App</h2>
-        {this.props.message}
+        <p><strong><em>{this.props.message}</em></strong></p>
         {this.formatCards()}
       </div>
     )

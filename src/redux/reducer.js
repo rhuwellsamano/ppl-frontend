@@ -1,7 +1,7 @@
 const initialState = {
   current_user: {},
   users: [],
-  message: "YEERRR"
+  message: "MOD 4 PROJECT LOADED - This message is coming from your global Redux Store"
 }
 
 export default function reducer(state = initialState, action) {
