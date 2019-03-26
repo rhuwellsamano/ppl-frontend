@@ -10,10 +10,13 @@ class PeopleActionButton extends Component {
 
   state = {
     formOpen: false,
-    text: ""
+    text: "",
+    user:""
   }
 
   openForm = () => {
+    // console.log('jon')
+
     this.setState({
       formOpen: true
     })
@@ -31,6 +34,50 @@ class PeopleActionButton extends Component {
     })
   }
 
+  getUserInfo=()=>{
+    let token = localStorage.token
+    fetch("http://localhost:3000/api/v1/current_user", {
+          method: "GET",
+          headers: {
+            "content-type": "application/json",
+            'accepts': "application/json",
+            'Authorization': `Bearer ${token}`
+          }
+        })
+          .then(resp => resp.json())
+          .then(user=>this.setState({user}))
+  }
+
+  createRole=(userInfo, orgInfo)=>{
+    console.log(this.state.user)
+    console.log(userInfo)
+    console.log(orgInfo)
+    const postObj = {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({rank:1, title:"owner", user_id:userInfo, organization_id:orgInfo})
+    }
+    fetch('http://localhost:3000/api/v1/roles', postObj)
+    .then(resp=>resp.json()).then(role=>console.log(role))
+  }
+
+  createOrganization=(string)=>{
+    this.getUserInfo();
+    const postObj = {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({name:string})
+    }
+    fetch('http://localhost:3000/api/v1/organizations', postObj)
+    .then(resp=>resp.json()).then(orgInfo=> this.createRole(this.state.user.user.id, orgInfo.id))
+  }
+
   handleAddlist = () => {
     const { dispatch } = this.props;
     const { text } = this.state;
@@ -40,6 +87,8 @@ class PeopleActionButton extends Component {
         text: ""
       })
       dispatch(addList(text))
+      this.createOrganization(text);
+      // console.log(text)
     }
     return;
   }
@@ -53,6 +102,8 @@ class PeopleActionButton extends Component {
         text: ""
       })
       dispatch(addCard(listID, text))
+
+      // console.log('user')
     }
     return;
   }

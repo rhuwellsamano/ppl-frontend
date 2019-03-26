@@ -48,7 +48,7 @@ signupSubmitHandler = (userInfo) => {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      accepts: "application/json"
+      'accepts': "application/json",
     },
     body: JSON.stringify({ user: userInfo })
   })
@@ -68,7 +68,7 @@ loginSubmitHandler = userInfo => {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      accepts: "application/json"
+      'accepts': "application/json",
     },
     body: JSON.stringify({ user: userInfo })
   })
@@ -91,7 +91,7 @@ loginSubmitHandler = userInfo => {
             exact path="/"
             render={() => <SliderForm loginSubmitHandler={this.loginSubmitHandler} signupSubmitHandler={this.signupSubmitHandler} />}
           />
-          <Route exact path="/authorized" render={()=><User />} />
+          <Route exact path="/authorized" render={()=><User data={this.state} />} />
         </Switch>
 
       </div>

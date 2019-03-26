@@ -46,10 +46,11 @@ class Event extends Component {
               title={list.title}
               cards={list.cards}
               index={index}
+              data={this.props.data}
               />
             ))}
             {provided.placeholder}
-            <PeopleActionButton list />
+            <PeopleActionButton list data={this.props.data}/>
             </div>
           )}
           </Droppable>

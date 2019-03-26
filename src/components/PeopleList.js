@@ -3,7 +3,7 @@ import PeopleCard from './PeopleCard'
 import PeopleActionButton from './PeopleActionButton'
 import { Droppable, Draggable } from 'react-beautiful-dnd'
 
-const PeopleList = ({title, cards, listID, index}) => {
+const PeopleList = ({title, cards, listID, index, data}) => {
   return(
     <Draggable draggableId={String(listID)} index={index}>
     {provided => (
@@ -25,7 +25,7 @@ const PeopleList = ({title, cards, listID, index}) => {
           />
         ))}
         {provided.placeholder}
-        <PeopleActionButton listID={listID}/>
+        <PeopleActionButton data={data} listID={listID}/>
         </div>
       )}
       </Droppable>

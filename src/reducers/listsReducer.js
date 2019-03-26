@@ -3,40 +3,7 @@ import { CONSTANTS } from '../actions'
 let listID = 2;
 let cardID = 5;
 
-const initialState = [
-  {
-    title: "Keep Going!",
-    id: `list-${0}`,
-    cards: [
-      {
-        id: `card-${0}`,
-        text: "Card Text"
-      },
-      {
-        id: `card-${1}`,
-        text: "More card text!"
-      }
-    ]
-  },
-  {
-    title: "You Got This!!",
-    id: `list-${1}`,
-    cards: [
-      {
-        id: `card-${2}`,
-        text: "More pain.."
-      },
-      {
-        id: `card-${3}`,
-        text: "More gain!"
-      },
-      {
-        id: `card-${4}`,
-        text: "It's lit."
-      }
-    ]
-  }
-]
+const initialState = []
 
 
 
@@ -103,7 +70,7 @@ const listsReducer = (state = initialState, action) => {
       if(droppableIdStart !== droppableIdEnd) {
         // find the list where drag happened
         const listStart = state.find(list => droppableIdStart === list.id)
-        
+
         // pull out card from this list
         const card = listStart.cards.splice(droppableIndexStart, 1)
 
