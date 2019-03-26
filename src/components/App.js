@@ -1,67 +1,103 @@
 import React, { Component } from 'react';
+import { Route, Switch, withRouter } from "react-router-dom";
+import Navbar from './Navbar'
 import '../App.css';
-import { connect } from 'react-redux'
-import PeopleList from './PeopleList'
-import PeopleActionButton from './PeopleActionButton'
-import { DragDropContext, Droppable } from 'react-beautiful-dnd'
-import { sort } from '../actions'
-
+// import Container from './Container'
+import User from './User'
+import SliderForm from './SliderForm'
 
 class App extends Component {
 
-  onDragEnd = (result) => {
-    const { destination, source, draggableId, type } = result;
-    if(!destination) {
-      return;
-    }
+state={
+  user:{}
+}
 
-    this.props.dispatch(
-      sort(
-        source.droppableId,
-        destination.droppableId,
-        source.index,
-        destination.index,
-        draggableId,
-        type
-      )
-    )
-  }
+componentDidMount = () => {
+  let token = localStorage.token;
+  token && token !== "undefined" ? fetch("http://localhost:3000/api/v1/current_user", {
+        method: "GET",
+        headers: {
+          "content-type": "application/json",
+          'accepts': "application/json",
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(resp => resp.json())
+        .then(user => {
+          this.setState({ user }, () => {
+            console.log(user);
+            this.props.history.push("/authorized");
+          });
+        })
+    : this.props.history.push("/");
+
+  // token ? document.getElementById("navbar").style.display = "block" : document.getElementById("navbar").style.display = "none"
+};
+
+// componentDidUpdate=()=>{
+//   if (localStorage.token) {
+//     document.getElementById("navbar").style.display = "block"
+//   } else {
+//     document.getElementById("navbar").style.display = "none"
+//   }
+// }
+
+signupSubmitHandler = (userInfo) => {
+  console.log(userInfo)
+  fetch("http://localhost:3000/api/v1/users", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      accepts: "application/json"
+    },
+    body: JSON.stringify({ user: userInfo })
+  })
+    .then(resp => resp.json())
+    .then(userData => {
+      console.log("userData-", userData);
+      this.setState({ user: userData }, () => {
+        localStorage.setItem("token", userData.jwt);
+        this.loginSubmitHandler(userInfo)
+        // localStorage.token ? fetch('http://localhost:3000/api/v1/current_user', {method: "GET", headers:{'content-type': 'application/json', 'accepts': 'application/json', 'Authorization': `Bearer ${localStorage.token}`}}).then(resp=>resp.json()).then(json=>{console.log(json);this.props.history.push("/authorized")}) : this.props.history.push("/login")
+      });
+    });
+};
+
+loginSubmitHandler = userInfo => {
+  fetch("http://localhost:3000/api/v1/login", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      accepts: "application/json"
+    },
+    body: JSON.stringify({ user: userInfo })
+  })
+    .then(resp => resp.json())
+    .then(userData => {
+      // console.log("userData-", userData);
+      this.setState({ user: userData }, () => {
+        localStorage.setItem("token", userData.jwt);
+        ((localStorage.token) && (localStorage.token !== "undefined")) ? fetch('http://localhost:3000/api/v1/current_user', {method: "GET", headers:{'content-type': 'application/json', 'accepts': 'application/json', 'Authorization': `Bearer ${localStorage.token}`}}).then(resp=>resp.json()).then(json=>{console.log(json);this.props.history.push("/authorized")}) : this.props.history.push("/")
+      });
+    });
+};
 
   render() {
-    const { lists } = this.props
-
+    // console.log(this.state);
     return (
-      <DragDropContext onDragEnd={this.onDragEnd}>
-        <div className="App">
-        <br></br>
-          <h2>PROJECT MANAGEMENT APP</h2>
-          <br></br>
-          <Droppable droppableId="all-lists" direction="horizontal" type="list">
-          {provided => (
-            <div className="people-list-container" {...provided.droppableProps} ref={provided.innerRef}>
-            {lists.map((list, index) => (
-              <PeopleList
-              key={list.id}
-              listID={list.id}
-              title={list.title}
-              cards={list.cards}
-              index={index}
-              />
-            ))}
-            {provided.placeholder}
-            <PeopleActionButton list />
-            </div>
-          )}
-          </Droppable>
-            <br></br>
-        </div>
-      </DragDropContext>
+      <div className="main">
+        <Switch>
+          <Route
+            exact path="/"
+            render={() => <SliderForm loginSubmitHandler={this.loginSubmitHandler} signupSubmitHandler={this.signupSubmitHandler} />}
+          />
+          <Route exact path="/authorized" render={()=><User />} />
+        </Switch>
+
+      </div>
+
     );
   }
 }
 
-const mapStateToProps = state => ({
-  lists: state.lists
-})
-
-export default connect(mapStateToProps)(App);
+export default withRouter(App);
