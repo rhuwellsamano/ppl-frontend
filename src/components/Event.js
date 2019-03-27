@@ -4,10 +4,32 @@ import { connect } from 'react-redux'
 import PeopleList from './PeopleList'
 import PeopleActionButton from './PeopleActionButton'
 import { DragDropContext, Droppable } from 'react-beautiful-dnd'
-import { sort } from '../actions'
+import { sort, getListsFetch } from '../actions'
+import logo from '../event-tasks-manager.png'
 
 
 class Event extends Component {
+
+  // state = {
+  //   daLists: []
+  // }
+
+  //
+  componentDidMount = () => {
+    // this.props.getListsFetch()
+    // fetch("http://localhost:3000/api/v1/current_user", {
+    //           method: "GET",
+    //           headers: {
+    //             "content-type": "application/json",
+    //             'accepts': "application/json",
+    //             'Authorization': `Bearer ${localStorage.token}`
+    //           }
+    //         })
+    //           .then(resp => resp.json()).then(user=>this.setState({
+    //             daLists: user
+    //           }))
+
+  }
 
   onDragEnd = (result) => {
     const { destination, source, draggableId, type } = result;
@@ -34,7 +56,7 @@ class Event extends Component {
       <DragDropContext onDragEnd={this.onDragEnd}>
         <div className="Event">
         <br></br>
-          <h2>PROJECT MANAGEMENT APP</h2>
+          <img src={logo} className="logo"/>
           <br></br>
           <Droppable droppableId="all-lists" direction="horizontal" type="list">
           {provided => (
@@ -64,5 +86,11 @@ class Event extends Component {
 const mapStateToProps = state => ({
   lists: state.lists
 })
+
+// const mapDispatchToProps = dispatch => {
+//   return {
+//     getListsFetch: () => dispatch(getListsFetch())
+//   }
+// }
 
 export default connect(mapStateToProps)(Event);

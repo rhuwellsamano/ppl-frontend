@@ -11,7 +11,6 @@ class PeopleActionButton extends Component {
   state = {
     formOpen: false,
     text: "",
-    user:""
   }
 
   openForm = () => {
@@ -34,7 +33,7 @@ class PeopleActionButton extends Component {
     })
   }
 
-  getUserInfo=()=>{
+  getUserInfoAndCreateRole=(string)=>{
     let token = localStorage.token
     fetch("http://localhost:3000/api/v1/current_user", {
           method: "GET",
@@ -45,13 +44,13 @@ class PeopleActionButton extends Component {
           }
         })
           .then(resp => resp.json())
-          .then(user=>this.setState({user}))
+          .then(user=>this.createOrganization(user, string))
   }
 
   createRole=(userInfo, orgInfo)=>{
-    console.log(this.state.user)
-    console.log(userInfo)
-    console.log(orgInfo)
+    // console.log(this.state.user)
+    // console.log(userInfo)
+    // console.log(orgInfo)
     const postObj = {
       method: 'POST',
       headers: {
@@ -61,11 +60,10 @@ class PeopleActionButton extends Component {
       body: JSON.stringify({rank:1, title:"owner", user_id:userInfo, organization_id:orgInfo})
     }
     fetch('http://localhost:3000/api/v1/roles', postObj)
-    .then(resp=>resp.json()).then(role=>console.log(role))
+    .then(resp=>resp.json()).then(role=>console.log("Role created", role))
   }
 
-  createOrganization=(string)=>{
-    this.getUserInfo();
+  createOrganization=(user, string)=>{
     const postObj = {
       method: 'POST',
       headers: {
@@ -75,7 +73,7 @@ class PeopleActionButton extends Component {
       body: JSON.stringify({name:string})
     }
     fetch('http://localhost:3000/api/v1/organizations', postObj)
-    .then(resp=>resp.json()).then(orgInfo=> this.createRole(this.state.user.user.id, orgInfo.id))
+    .then(resp=>resp.json()).then(orgInfo=> this.createRole(user.user.id, orgInfo.id))
   }
 
   handleAddlist = () => {
@@ -87,7 +85,7 @@ class PeopleActionButton extends Component {
         text: ""
       })
       dispatch(addList(text))
-      this.createOrganization(text);
+      this.getUserInfoAndCreateRole(text);
       // console.log(text)
     }
     return;
@@ -110,7 +108,7 @@ class PeopleActionButton extends Component {
 
   renderAddButton = () => {
     const { list } = this.props;
-    const buttonText = list ? "Add another list" : "Add another card";
+    const buttonText = list ? "Add another event" : "Add another task";
     const buttonTextOpacity = list ? 1 : 0.5;
     const buttonTextColor = list ? "slategray" : "inherit";
     const buttonTextBackground = list ? "whitesmoke" : "inherit"
@@ -133,9 +131,9 @@ class PeopleActionButton extends Component {
 
     const { list } = this.props;
 
-    const placeholder = list ? "Enter list title.." : "Enter a title for this card.."
+    const placeholder = list ? "Enter event title.." : "Enter a name for this task.."
 
-    const buttonTitle = list ? "Add List" : "Add Card";
+    const buttonTitle = list ? "Add event" : "Add task";
 
 
     return <div>
